@@ -58,11 +58,13 @@ def load_tokenizer(from_config=False, filepaths=None, savepath=None):
 
 # TODO: review to confirm code
 def load_model(from_config=False):
-    """load_model
-       Loads a transformers-based model to train on Hmong data.
-       @param from_config (bool) : Indicates whether to train from scratch (True)
-           or from a pre-existing transformers-based multilingual model (False).
-       returns : model of type transformers.BertForMaskedLM"""
+    """
+    load_model
+    Loads a transformers-based model to train on Hmong data.
+    @param from_config (bool) : Indicates whether to train from scratch (True)
+        or from a pre-existing transformers-based multilingual model (False).
+    returns : model of type transformers.BertForMaskedLM
+    """
     if from_config:
         config_ = BertConfig(vocab_size=VOCAB_SIZE)
         model = BertForMaskedLM(config_)
@@ -73,8 +75,50 @@ def load_model(from_config=False):
     return model
 
 
-def load_dataset(location):
-    pass
+def generate_filepaths(path):
+    """
+    generate_filepaths
+    Loads the filepaths as a list.
+    @param path (str) : Path to the parent directory for the files as a str.
+    returns : List containing paths to each file.
+    """
+    files = [os.path.join(root, name) for root, _, files in os.walk(path) for name in files]
+    return files
+
+
+def load_dataset(path, tokenizer):
+    """
+    load_dataset
+    Loads the dataset at the path specified.
+    @param path (str) : Path to the parent directory for the dataset.
+    @param tokenizer (PreTrainedTokenizer) : tokenizer object corresponding to the model to train.
+    returns : transformers.DataCollatorForLanguageModeling object containing the data.
+    """
+    filepaths = generate_filepaths(path)
+    dataset_ = load_dataset(path=path, data_files=filepaths, split='train')
+    dataset = dataset_.train_test_split(test_size=0.2)
+    
+    max_length = 128
+    
+    def tokenize_data(data_in):
+        tokenized = tokenizer(data_in['text'],
+                              padding="max_length",
+                              max_length=max_length,
+                              truncation=True)
+        return tokenized
+    
+    train_data = dataset['train'].map(tokenize_data, batched=True, remove_columns=['token_type_ids'])
+    train_data.set_format(type='torch')
+    
+    test_data = dataset['test'].map(tokenize_data, batched=True, remove_columns=['token_type_ids'])
+    test_data.set_format(type='torch')
+    
+    # MLM focus only given RoBERTa paper; NSP is excluded
+    collator = DataCollatorForLanguageModeling(tokenizer=tokenizer,
+                                               mlm_probability=0.15,
+                                               return_tensors='pt')
+    
+    return collator
 
 
 if __name__ == '__main__':
