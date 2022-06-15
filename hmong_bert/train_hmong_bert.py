@@ -73,5 +73,9 @@ def load_model(from_config=False):
     return model
 
 
+def load_dataset(location):
+    pass
+
+
 if __name__ == '__main__':
     pass
