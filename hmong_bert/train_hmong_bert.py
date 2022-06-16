@@ -8,6 +8,7 @@ __copyright__ = "Copyright © 2022 Nathan M. White"
 __author__ = "Nathan M. White"
 __author_email__ = "nathan.white1@jcu.edu.au"
 
+import logging
 import os
 
 from argparse import ArgumentParser
@@ -139,13 +140,21 @@ if __name__ == '__main__':
     parser.add_argument('--epochs', type=int, default=10)
     args = parser.parse_args()
     
+    logging.basicConfig(level=logging.INFO)
+    logging.info('Loading tokenizer and model.')
+    
     # TODO: provide full path
     files = generate_filepaths(args.data_path)
     tokenizer = load_tokenizer(args.from_config, files, args.save_path)
     
     model = load_model(args.from_config)
     
+    logging.info('Loaded tokenizer and model.')
+    logging.info('Loading data.')
+    
     collator, train_data, test_data = load_dataset(args.data_path, tokenizer)
+    
+    logging.info('Loaded data.')
     
     training_args = TrainingArguments(output_dir=args.save_path,
                                       overwrite_output_dir=True,
@@ -170,4 +179,8 @@ if __name__ == '__main__':
                       eval_dataset=test_data,
                      )
     
+    logging.info('Beginning training.')
+    
     trainer.train()
+
+    logging.info('Training completed.')
