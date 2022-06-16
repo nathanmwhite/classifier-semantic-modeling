@@ -16,7 +16,8 @@ from argparse import ArgumentParser
 from transformers import BertConfig, BertTokenizer, BertForPreTraining, BertTokenizerFast, BertModel
 from transformers import DataCollatorForLanguageModeling, TrainingArguments, Trainer
 from transformers import BertTokenizer, BertForMaskedLM
-from tokenizers import BertWordPieceTokenizer, WordPieceTrainer
+from tokenizers import BertWordPieceTokenizer
+from tokenizers.trainers import WordPieceTrainer
 
 from datasets import load_dataset
 
