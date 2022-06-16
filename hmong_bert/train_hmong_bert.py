@@ -10,6 +10,8 @@ __author_email__ = "nathan.white1@jcu.edu.au"
 
 import os
 
+from argparse import ArgumentParser
+
 from transformers import BertConfig, BertTokenizer, BertForPreTraining, BertTokenizerFast, BertModel
 from transformers import DataCollatorForLanguageModeling, TrainingArguments, Trainer
 from transformers import BertTokenizer, BertForMaskedLM
@@ -92,7 +94,10 @@ def load_dataset(path, tokenizer):
     Loads the dataset at the path specified.
     @param path (str) : Path to the parent directory for the dataset.
     @param tokenizer (PreTrainedTokenizer) : tokenizer object corresponding to the model to train.
-    returns : transformers.DataCollatorForLanguageModeling object containing the data.
+    returns : 
+        transformers.DataCollatorForLanguageModeling object containing the data
+        datasets.Dataset containing the training data
+        datasets.Dataset containing the test data
     """
     filepaths = generate_filepaths(path)
     dataset_ = load_dataset(path=path, data_files=filepaths, split='train')
@@ -118,8 +123,51 @@ def load_dataset(path, tokenizer):
                                                mlm_probability=0.15,
                                                return_tensors='pt')
     
-    return collator
+    return collator, train_data, test_data
 
 
 if __name__ == '__main__':
-    pass
+    parser = ArgumentParser()
+    parser.add_argument('--from_config', type=bool, default=False)
+    parser.add_argument('--data_path', type=str, default='data')
+    parser.add_argument('--save_path', type=str, default='models')
+    parser.add_argument('--batch_size', type=int, default=64)
+    parser.add_argument('--grad_steps', type=int, default=1)
+    parser.add_argument('--lr', type=float, default=3e-05)
+    parser.add_argument('--weight_decay', type=float, default=0.0)
+    parser.add_argument('--max_grad_norm', type=float, default=1.0)
+    parser.add_argument('--epochs', type=int, default=10)
+    args = parser.parse_args()
+    
+    # TODO: provide full path
+    files = generate_filepaths(args.data_path)
+    tokenizer = load_tokenizer(args.from_config, files, args.save_path)
+    
+    model = load_model(args.from_config)
+    
+    collator, train_data, test_data = load_dataset(args.data_path, tokenizer)
+    
+    training_args = TrainingArguments(output_dir=args.save_path,
+                                      overwrite_output_dir=True,
+                                      evaluation_strategy='epoch',
+                                      per_device_train_batch_size=args.batch_size,
+                                      per_device_eval_batch_size=args.batch_size,
+                                      per_gpu_train_batch_size=args.batch_size,
+                                      per_gpu_eval_batch_size=args.batch_size,
+                                      gradient_accumulation_steps=args.grad_steps,
+                                      learning_rate=args.lr,
+                                      weight_decay=args.weight_decay,
+                                      max_grad_norm=args.max_grad_norm,
+                                      num_train_epochs=args.epochs,
+                                      logging_steps=1000,
+                                      save_steps=1000,
+                                     )
+
+    trainer = Trainer(model=model,
+                      args=training_args,
+                      data_collator=collator,
+                      train_dataset=train_data,
+                      eval_dataset=test_data,
+                     )
+    
+    trainer.train()
