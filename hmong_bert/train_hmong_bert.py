@@ -90,9 +90,9 @@ def generate_filepaths(path):
     return files
 
 
-def load_dataset(path, tokenizer):
+def load_data(path, tokenizer):
     """
-    load_dataset
+    load_data
     Loads the dataset at the path specified.
     @param path (str) : Path to the parent directory for the dataset.
     @param tokenizer (PreTrainedTokenizer) : tokenizer object corresponding to the model to train.
@@ -153,7 +153,7 @@ if __name__ == '__main__':
     logging.info('Loaded tokenizer and model.')
     logging.info('Loading data.')
     
-    collator, train_data, test_data = load_dataset(args.data_path, tokenizer)
+    collator, train_data, test_data = load_data(args.data_path, tokenizer)
     
     logging.info('Loaded data.')
     
