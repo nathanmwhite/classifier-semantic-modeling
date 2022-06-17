@@ -114,11 +114,11 @@ def load_data(path, tokenizer):
                               truncation=True)
         return tokenized
     
-    train_data = dataset['train'].map(tokenize_data, batched=True, remove_columns=['token_type_ids'])
-    train_data.set_format(type='torch')
+    train_data = dataset['train'].map(tokenize_data, batched=True)
+    train_data.set_format(type='torch', columns=['input_ids', 'attention_mask'])
     
-    test_data = dataset['test'].map(tokenize_data, batched=True, remove_columns=['token_type_ids'])
-    test_data.set_format(type='torch')
+    test_data = dataset['test'].map(tokenize_data, batched=True)
+    test_data.set_format(type='torch', columns=['input_ids', 'attention_mask'])
     
     # MLM focus only given RoBERTa paper; NSP is excluded
     collator = DataCollatorForLanguageModeling(tokenizer=tokenizer,
