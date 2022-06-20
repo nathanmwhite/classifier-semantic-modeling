@@ -103,7 +103,7 @@ def load_data(path, tokenizer):
         datasets.Dataset containing the test data
     """
     filepaths = generate_filepaths(path)
-    dataset_ = load_dataset(path=path, data_files=filepaths, split='train', name="hmong_bert_train_data")
+    dataset_ = load_dataset(path=path, name="hmbert_data", data_files=filepaths, split='train',)
     dataset = dataset_.train_test_split(test_size=0.2)
     
     max_length = 128
