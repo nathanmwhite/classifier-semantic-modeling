@@ -45,9 +45,11 @@ def load_tokenizer(from_config=False, filepaths=None, savepath=None):
                         special_tokens=['[PAD]', '[UNK]', '[CLS]', '[SEP]', '[MASK]'],
                         limit_alphabet=1500)
         
-        tokenizer.save(savepath)
+        tokenizer_savepath = os.path.join(savepath, 'tokenizer')
         
-        bert_tokenizer = BertTokenizerFast(tokenizer_file=savepath,
+        tokenizer.save(tokenizer_savepath)
+        
+        bert_tokenizer = BertTokenizerFast(tokenizer_file=tokenizer_savepath,
                                            do_lower_case=LOWER_CASE,
                                            pad_token = '[PAD]',
                                            unk_token = '[UNK]',
