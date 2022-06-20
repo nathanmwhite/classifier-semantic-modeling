@@ -17,7 +17,6 @@ from transformers import BertConfig, BertTokenizer, BertForPreTraining, BertToke
 from transformers import DataCollatorForLanguageModeling, TrainingArguments, Trainer
 from transformers import BertTokenizer, BertForMaskedLM
 from tokenizers import BertWordPieceTokenizer
-from tokenizers.trainers import WordPieceTrainer
 
 from datasets import load_dataset
 
@@ -39,12 +38,12 @@ def load_tokenizer(from_config=False, filepaths=None, savepath=None):
        returns : a subclass of PreTrainedTokenizer"""
     if from_config:
         tokenizer = BertWordPieceTokenizer(lowercase=LOWER_CASE)
-        wp_trainer = WordPieceTrainer(vocab_size=VOCAB_SIZE,
-                                      min_frequency=5,
-                                      special_tokens=['[PAD]', '[UNK]', '[CLS]', '[SEP]', '[MASK]'],
-                                      limit_alphabet=1500)
                                       
-        tokenizer.train(filepaths, wp_trainer)
+        tokenizer.train(filepaths,
+                        vocab_size=VOCAB_SIZE,
+                        min_frequency=5,
+                        special_tokens=['[PAD]', '[UNK]', '[CLS]', '[SEP]', '[MASK]'],
+                        limit_alphabet=1500)
         
         tokenizer.save(savepath)
         
