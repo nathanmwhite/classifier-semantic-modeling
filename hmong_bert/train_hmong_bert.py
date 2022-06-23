@@ -133,7 +133,6 @@ if __name__ == '__main__':
     parser = ArgumentParser()
     parser.add_argument('--from_config', action='store_true')
     parser.add_argument('--from_pretrained', dest='from_config', action='store_false')
-    parser.set_default(from_config=False)
     parser.add_argument('--data_path', type=str, default='data')
     parser.add_argument('--save_path', type=str, default='models')
     parser.add_argument('--batch_size', type=int, default=64)
@@ -142,6 +141,7 @@ if __name__ == '__main__':
     parser.add_argument('--weight_decay', type=float, default=0.0)
     parser.add_argument('--max_grad_norm', type=float, default=1.0)
     parser.add_argument('--epochs', type=int, default=10)
+    parser.set_defaults(from_config=False)
     args = parser.parse_args()
     
     logging.basicConfig(level=logging.INFO)
