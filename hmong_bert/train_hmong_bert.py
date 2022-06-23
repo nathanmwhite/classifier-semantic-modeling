@@ -152,6 +152,8 @@ if __name__ == '__main__':
     # remove final slash to enable use of datasets.load_dataset
     data_path = args.data_path.rstrip('/')
     
+    print(data_path)
+    
     # TODO: provide full path
     files = generate_filepaths(data_path)
     tokenizer = load_tokenizer(args.from_config, files, data_path)
@@ -159,7 +161,7 @@ if __name__ == '__main__':
     model = load_model(args.from_config)
     
     logging.info('Loaded tokenizer and model.')
-    logging.info('Loading data.')
+    print('Loading data.')
     
     collator, train_data, test_data = load_data(data_path, tokenizer)
     
