@@ -150,10 +150,7 @@ if __name__ == '__main__':
     print(f'From config: {args.from_config}')
     
     # remove final slash to enable use of datasets.load_dataset
-    #data_path = args.data_path.rstrip('/')
-    data_path = args.data_path
-    
-    print(data_path)
+    data_path = args.data_path.rstrip('/')
     
     # TODO: provide full path
     files = generate_filepaths(data_path)
