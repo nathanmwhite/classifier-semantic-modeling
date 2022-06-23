@@ -131,8 +131,8 @@ def load_data(path, tokenizer):
 
 if __name__ == '__main__':
     parser = ArgumentParser()
-    parser.add_argument('--from_config', action='status_true')
-    parser.add_argument('--from_pretrained', dest='from_config', action='status_false')
+    parser.add_argument('--from_config', action='store_true')
+    parser.add_argument('--from_pretrained', dest='from_config', action='store_false')
     parser.set_default(from_config=False)
     parser.add_argument('--data_path', type=str, default='data')
     parser.add_argument('--save_path', type=str, default='models')
