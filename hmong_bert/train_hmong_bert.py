@@ -25,6 +25,8 @@ from datasets import load_dataset
 VOCAB_SIZE = 13200
 LOWER_CASE = True
 
+logging.basicConfig(level=logging.INFO)
+
 
 def load_tokenizer(from_config=False, filepaths=None, savepath=None):
     """load_tokenizer
@@ -144,7 +146,6 @@ if __name__ == '__main__':
     parser.set_defaults(from_config=False)
     args = parser.parse_args()
     
-    logging.basicConfig(level=logging.INFO)
     logging.info('Loading tokenizer and model.')
     print(f'From config: {args.from_config}')
     
