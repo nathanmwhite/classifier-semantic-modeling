@@ -146,6 +146,7 @@ if __name__ == '__main__':
     
     logging.basicConfig(level=logging.INFO)
     logging.info('Loading tokenizer and model.')
+    logging.info(f'From config: {args.from_config}')
     
     # remove final slash to enable use of datasets.load_dataset
     data_path = args.data_path.rstrip('/')
