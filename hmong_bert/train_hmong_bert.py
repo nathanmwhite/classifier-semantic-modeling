@@ -131,7 +131,9 @@ def load_data(path, tokenizer):
 
 if __name__ == '__main__':
     parser = ArgumentParser()
-    parser.add_argument('--from_config', type=bool, default=False)
+    parser.add_argument('--from_config', action='status_true')
+    parser.add_argument('--from_pretrained', dest='from_config', action='status_false')
+    parser.set_default(from_config=False)
     parser.add_argument('--data_path', type=str, default='data')
     parser.add_argument('--save_path', type=str, default='models')
     parser.add_argument('--batch_size', type=int, default=64)
@@ -145,16 +147,19 @@ if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
     logging.info('Loading tokenizer and model.')
     
+    # remove final slash to enable use of datasets.load_dataset
+    data_path = args.data_path.rstrip('/')
+    
     # TODO: provide full path
-    files = generate_filepaths(args.data_path)
-    tokenizer = load_tokenizer(args.from_config, files, args.save_path)
+    files = generate_filepaths(data_path)
+    tokenizer = load_tokenizer(args.from_config, files, data_path)
     
     model = load_model(args.from_config)
     
     logging.info('Loaded tokenizer and model.')
     logging.info('Loading data.')
     
-    collator, train_data, test_data = load_data(args.data_path, tokenizer)
+    collator, train_data, test_data = load_data(data_path, tokenizer)
     
     logging.info('Loaded data.')
     
