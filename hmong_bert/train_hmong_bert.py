@@ -182,6 +182,22 @@ if __name__ == '__main__':
                                       save_steps=1000,
                                      )
 
+    # TODO: create learning rate scheduler
+    # peak learning rate tuned for each
+    # number of warmup steps tuned for each
+    # tuning Adam epsilon term
+    # b_2 = 0.98 more stable when training with large batch sizes (B=8000)
+    # sequences of maximum length T=512
+    # original bert:
+    # b_1 = 0.9
+    # b_2 = 0.999
+    # e = 1e-06
+    # L2 weight decay = 0.01
+    # lr warmed up over first 10,000 steps up to 1e-04, and then linearly decayed
+    # pretrained for S=1 mil updates, minibatches of B=256
+    # note: dynamic vs. static masking (Bert uses static, RoBERTa uses dynamic)
+    #  dynamic masking is masking each time sequence is fed to model; the difference is negligible
+    
     trainer = Trainer(model=model,
                       args=training_args,
                       data_collator=collator,
