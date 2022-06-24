@@ -154,15 +154,15 @@ if __name__ == '__main__':
     data_path = args.data_path.rstrip('/')
     
     # TODO: provide full path
-    files = generate_filepaths(data_path)
-    tokenizer = load_tokenizer(args.from_config, files, data_path)
+    files = generate_filepaths(args.data_path)
+    tokenizer = load_tokenizer(args.from_config, files, args.data_path)
     
     model = load_model(args.from_config)
     
     logging.info('Loaded tokenizer and model.')
     print('Loading data.')
     
-    collator, train_data, test_data = load_data(data_path, tokenizer)
+    collator, train_data, test_data = load_data(args.data_path, tokenizer)
     
     logging.info('Loaded data.')
     
