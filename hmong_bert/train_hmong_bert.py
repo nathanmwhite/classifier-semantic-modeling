@@ -47,7 +47,7 @@ def load_tokenizer(from_config=False, filepaths=None, savepath=None):
                         special_tokens=['[PAD]', '[UNK]', '[CLS]', '[SEP]', '[MASK]'],
                         limit_alphabet=1500)
         
-        tokenizer_savepath = os.path.join(savepath, 'tokenizer')
+        tokenizer_savepath = os.path.join(savepath, 'tokenizer.json')
         
         tokenizer.save(tokenizer_savepath)
         
