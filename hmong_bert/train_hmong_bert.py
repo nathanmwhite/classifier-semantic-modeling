@@ -133,9 +133,9 @@ def load_data(path, tokenizer):
 
 if __name__ == '__main__':
     parser = ArgumentParser()
-    #parser.add_argument('--from_config', action='store_true')
-    #parser.add_argument('--from_pretrained', dest='from_config', action='store_false')
-    parser.add_argument('--from_config', type=bool, default=False)
+    parser.add_argument('--from_config', action='store_true')
+    parser.add_argument('--from_pretrained', dest='from_config', action='store_false')
+    #parser.add_argument('--from_config', type=bool, default=False)
     parser.add_argument('--data_path', type=str, default='data')
     parser.add_argument('--save_path', type=str, default='models')
     parser.add_argument('--batch_size', type=int, default=64)
@@ -144,7 +144,7 @@ if __name__ == '__main__':
     parser.add_argument('--weight_decay', type=float, default=0.0)
     parser.add_argument('--max_grad_norm', type=float, default=1.0)
     parser.add_argument('--epochs', type=int, default=10)
-    #parser.set_defaults(from_config=False)
+    parser.set_defaults(from_config=False)
     args = parser.parse_args()
     
     logging.info('Loading tokenizer and model.')
@@ -154,15 +154,15 @@ if __name__ == '__main__':
     data_path = args.data_path.rstrip('/')
     
     # TODO: provide full path
-    files = generate_filepaths(args.data_path)
-    tokenizer = load_tokenizer(args.from_config, files, args.data_path)
+    files = generate_filepaths(data_path)
+    tokenizer = load_tokenizer(args.from_config, files, data_path)
     
     model = load_model(args.from_config)
     
     logging.info('Loaded tokenizer and model.')
     print('Loading data.')
     
-    collator, train_data, test_data = load_data(args.data_path, tokenizer)
+    collator, train_data, test_data = load_data(data_path, tokenizer)
     
     logging.info('Loaded data.')
     
