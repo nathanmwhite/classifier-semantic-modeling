@@ -16,6 +16,7 @@ from argparse import ArgumentParser
 from transformers import BertConfig, BertTokenizer, BertForPreTraining, BertTokenizerFast, BertModel
 from transformers import DataCollatorForLanguageModeling, TrainingArguments, Trainer
 from transformers import BertTokenizer, BertForMaskedLM
+from transformers import AdamW, get_scheduler
 from tokenizers import BertWordPieceTokenizer
 
 from datasets import load_dataset
@@ -139,12 +140,13 @@ if __name__ == '__main__':
     parser.add_argument('--batch_size', type=int, default=64)
     parser.add_argument('--grad_steps', type=int, default=1)
     parser.add_argument('--lr', type=float, default=3e-05)
-    parser.add_argument('--weight_decay', type=float, default=0.0)
+    #parser.add_argument('--weight_decay', type=float, default=0.0)
     parser.add_argument('--max_grad_norm', type=float, default=1.0)
     parser.add_argument('--epochs', type=int, default=10)
     parser.add_argument('--from_config', action='store_true')
     parser.add_argument('--from_pretrained', dest='from_config', action='store_false')
-    parser.set_defaults(from_config=False)
+    parser.add_argument('--roberta_scheduler', action='store_true')
+    parser.set_defaults(from_config=False, roberta_scheduler=False)
     args = parser.parse_args()
     
     logging.info('Loading tokenizer and model.')
@@ -166,6 +168,25 @@ if __name__ == '__main__':
     
     logging.info('Loaded data.')
     
+    # this approach currently overrides args.weight_decay
+    if roberta_scheduler:
+        # this approach differs from RoBERTa's original:
+        #  learning rate and epsilon are fixed rather than tuned
+        # TODO: revisit whether AdamWeightDecay would be superior
+        lr = args.lr
+        epsilon = 1e-06
+        betas = (0.9, 0.98)
+        weight_decay = 0.01
+        num_warmup_steps = 10_000
+        num_training_steps = 1e06
+    else:
+        lr = 1e-04
+        epsilon = 1e-06
+        betas = (0.9, 0.999)
+        weight_decay = 0.01
+        num_warmup_steps = 10_000
+        num_training_steps = 1e06
+    
     training_args = TrainingArguments(output_dir=args.save_path,
                                       overwrite_output_dir=True,
                                       evaluation_strategy='epoch',
@@ -174,14 +195,21 @@ if __name__ == '__main__':
                                       per_gpu_train_batch_size=args.batch_size,
                                       per_gpu_eval_batch_size=args.batch_size,
                                       gradient_accumulation_steps=args.grad_steps,
-                                      learning_rate=args.lr,
-                                      weight_decay=args.weight_decay,
+                                      learning_rate=lr,
+                                      weight_decay=weight_decay,
+                                      adam_beta1=betas[0],
+                                      adam_beta2=betas[1],
+                                      adam_epsilon=epsilon,
                                       max_grad_norm=args.max_grad_norm,
-                                      num_train_epochs=args.epochs,
+                                      warmup_steps=num_warmup_steps,
+                                      #num_train_epochs=args.epochs,
+                                      max_steps=num_training_steps,
                                       logging_steps=1000,
                                       save_steps=1000,
                                      )
 
+                
+                          
     # TODO: create learning rate scheduler
     # peak learning rate tuned for each
     # number of warmup steps tuned for each
@@ -198,6 +226,8 @@ if __name__ == '__main__':
     # note: dynamic vs. static masking (Bert uses static, RoBERTa uses dynamic)
     #  dynamic masking is masking each time sequence is fed to model; the difference is negligible
     
+    # Trainer automatically generates a default AdamW optimizer
+    #  with a linear scheduler using TrainingArguments
     trainer = Trainer(model=model,
                       args=training_args,
                       data_collator=collator,
