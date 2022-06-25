@@ -170,7 +170,7 @@ if __name__ == '__main__':
     logging.info('Loaded data.')
     
     # this approach currently overrides args.weight_decay
-    if roberta_scheduler:
+    if args.roberta_scheduler:
         # this approach differs from RoBERTa's original:
         #  learning rate and epsilon are fixed rather than tuned
         # TODO: revisit whether AdamWeightDecay would be superior
