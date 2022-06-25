@@ -146,6 +146,7 @@ if __name__ == '__main__':
     parser.add_argument('--from_config', action='store_true')
     parser.add_argument('--from_pretrained', dest='from_config', action='store_false')
     parser.add_argument('--roberta_scheduler', action='store_true')
+    parser.add_argument('--base_scheduler', dest='roberta_scheduler', action='store_false')
     parser.set_defaults(from_config=False, roberta_scheduler=False)
     args = parser.parse_args()
     
