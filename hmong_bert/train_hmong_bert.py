@@ -179,14 +179,14 @@ if __name__ == '__main__':
         betas = (0.9, 0.98)
         weight_decay = 0.01
         num_warmup_steps = 10_000
-        num_training_steps = 1e06
+        num_training_steps = 1_000_000
     else:
         lr = 1e-04
         epsilon = 1e-06
         betas = (0.9, 0.999)
         weight_decay = 0.01
         num_warmup_steps = 10_000
-        num_training_steps = 1e06
+        num_training_steps = 1_000_000
     
     training_args = TrainingArguments(output_dir=args.save_path,
                                       overwrite_output_dir=True,
