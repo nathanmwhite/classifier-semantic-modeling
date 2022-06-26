@@ -50,9 +50,9 @@ def load_tokenizer(from_config=False, filepaths=None, savepath=None):
         
         tokenizer_savepath = os.path.join(savepath, 'tokenizer.json')
         
-        print('savepath:', tokenizer_savepath)
+        #print('savepath:', tokenizer_savepath)
         
-        #tokenizer.save(tokenizer_savepath)
+        tokenizer.save(tokenizer_savepath)
         
         bert_tokenizer = BertTokenizerFast(tokenizer_file=tokenizer_savepath,
                                            do_lower_case=LOWER_CASE,
