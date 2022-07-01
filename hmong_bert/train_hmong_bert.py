@@ -208,7 +208,7 @@ if __name__ == '__main__':
                                       #num_train_epochs=args.epochs,
                                       max_steps=num_training_steps,
                                       logging_steps=1000,
-                                      save_steps=1000,
+                                      save_steps=50000,
                                      )
 
                 
