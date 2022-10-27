@@ -24,12 +24,14 @@ from .util import get_model, get_method_object
 
 # TODO: code to determine which words to consider
 # TODO: will need to develop polysyllabic word support for Hmong and Chinese
+# TODO: this should essentially be able to crawl over the WordNet versions for each language
 def obtain_classifier_words(corpus, nom_clf):
     pass
 
 # TODO: code to obtain embedding vectors for each word
 #  should return dictionary of word : index relations and
 #  vectors from the model
+# TODO: this should obtain the vectors from the models
 def obtain_vectors(model, vocab):
     pass
 
